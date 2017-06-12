@@ -1,4 +1,9 @@
-FROM buildpack-deps:trusty-curl
+FROM spitsw/armhf-ubuntu-qemu
+
+RUN [ "cross-build-start" ]
+RUN apt-get update
+RUN apt-get -y install apt-utils
+RUN	apt-get -y install wget
 
 RUN set -ex && \
     for key in \
@@ -10,12 +15,12 @@ RUN set -ex && \
     done
 
 ENV TELEGRAF_VERSION 1.3.1
-RUN wget -q https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_amd64.deb.asc && \
-    wget -q https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_amd64.deb && \
-    gpg --batch --verify telegraf_${TELEGRAF_VERSION}-1_amd64.deb.asc telegraf_${TELEGRAF_VERSION}-1_amd64.deb && \
-    dpkg -i telegraf_${TELEGRAF_VERSION}-1_amd64.deb && \
-    rm -f telegraf_${TELEGRAF_VERSION}-1_amd64.deb*
-
+RUN wget -q https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_armhf.deb.asc && \
+    wget -q https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_armhf.deb && \
+    gpg --batch --verify telegraf_${TELEGRAF_VERSION}-1_armhf.deb.asc telegraf_${TELEGRAF_VERSION}-1_armhf.deb && \
+    dpkg -i telegraf_${TELEGRAF_VERSION}-1_armhf.deb && \
+    rm -f telegraf_${TELEGRAF_VERSION}-1_armhf.deb*
+RUN [ "cross-build-end" ]
 EXPOSE 8125/udp 8092/udp 8094
 
 COPY entrypoint.sh /entrypoint.sh

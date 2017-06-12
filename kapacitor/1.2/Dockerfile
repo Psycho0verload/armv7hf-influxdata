@@ -1,4 +1,9 @@
-FROM buildpack-deps:jessie-curl
+FROM resin/armv7hf-debian-qemu
+
+RUN [ "cross-build-start" ]
+RUN apt-get update
+RUN apt-get -y install apt-utils
+RUN	apt-get -y install wget
 
 RUN set -ex && \
     for key in \
@@ -10,13 +15,13 @@ RUN set -ex && \
     done
 
 ENV KAPACITOR_VERSION 1.2.1
-RUN wget -q https://dl.influxdata.com/kapacitor/releases/kapacitor_${KAPACITOR_VERSION}_amd64.deb.asc && \
-    wget -q https://dl.influxdata.com/kapacitor/releases/kapacitor_${KAPACITOR_VERSION}_amd64.deb && \
-    gpg --batch --verify kapacitor_${KAPACITOR_VERSION}_amd64.deb.asc kapacitor_${KAPACITOR_VERSION}_amd64.deb && \
-    dpkg -i kapacitor_${KAPACITOR_VERSION}_amd64.deb && \
-    rm -f kapacitor_${KAPACITOR_VERSION}_amd64.deb*
+RUN wget -q https://dl.influxdata.com/kapacitor/releases/kapacitor_${KAPACITOR_VERSION}_armhf.deb.asc && \
+    wget -q https://dl.influxdata.com/kapacitor/releases/kapacitor_${KAPACITOR_VERSION}_armhf.deb && \
+    gpg --batch --verify kapacitor_${KAPACITOR_VERSION}_armhf.deb.asc kapacitor_${KAPACITOR_VERSION}_armhf.deb && \
+    dpkg -i kapacitor_${KAPACITOR_VERSION}_armhf.deb && \
+    rm -f kapacitor_${KAPACITOR_VERSION}_armhf.deb*
 COPY kapacitor.conf /etc/kapacitor/kapacitor.conf
-
+RUN [ "cross-build-end" ]
 EXPOSE 9092
 
 VOLUME /var/lib/kapacitor

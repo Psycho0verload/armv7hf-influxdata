@@ -1,4 +1,9 @@
-FROM buildpack-deps:jessie-curl
+FROM resin/armv7hf-debian-qemu
+
+RUN [ "cross-build-start" ]
+RUN apt-get update
+RUN apt-get -y install apt-utils
+RUN	apt-get -y install wget
 
 RUN set -ex && \
     for key in \
@@ -10,13 +15,13 @@ RUN set -ex && \
     done
 
 ENV INFLUXDB_VERSION 1.1.5
-RUN wget -q https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_amd64.deb.asc && \
-    wget -q https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_amd64.deb && \
-    gpg --batch --verify influxdb_${INFLUXDB_VERSION}_amd64.deb.asc influxdb_${INFLUXDB_VERSION}_amd64.deb && \
-    dpkg -i influxdb_${INFLUXDB_VERSION}_amd64.deb && \
-    rm -f influxdb_${INFLUXDB_VERSION}_amd64.deb*
+RUN wget -q https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_armhf.deb.asc && \
+    wget -q https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_armhf.deb && \
+    gpg --batch --verify influxdb_${INFLUXDB_VERSION}_armhf.deb.asc influxdb_${INFLUXDB_VERSION}_armhf.deb && \
+    dpkg -i influxdb_${INFLUXDB_VERSION}_armhf.deb && \
+    rm -f influxdb_${INFLUXDB_VERSION}_armhf.deb*
 COPY influxdb.conf /etc/influxdb/influxdb.conf
-
+RUN [ "cross-build-end" ]
 EXPOSE 8086
 
 VOLUME /var/lib/influxdb
