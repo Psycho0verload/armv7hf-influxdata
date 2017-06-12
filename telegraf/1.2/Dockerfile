@@ -1,4 +1,4 @@
-FROM spitsw/armhf-ubuntu-qemu
+FROM yangxuan8282/armhf-ubuntu-qemu
 
 RUN [ "cross-build-start" ]
 RUN apt-get update
